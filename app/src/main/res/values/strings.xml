@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">AuthorizationApp</string>
+    <string name="ok">OK</string>
+    <string name="permission_storage_rationale">Storage Permission is needed to show the gallery preview.</string>
+    <string name="permission_available_storage">Storage Permission has been granted. Preview can now be opened.</string>
+    <string name="permissions_not_granted">Permissions were not granted.</string>
+    <string name="facebook_app_id">618073065031000</string>
+</resources>
