@@ -12,7 +12,7 @@
         android:theme="@style/AppTheme"
         android:name=".AuthorizationAppApplication"
         >
-        <activity android:name=".MainActivity">
+        <activity android:name=".view.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
-        <provider android:authorities="com.facebook.app.FacebookContentProvider618073065031000"
+        <provider android:authorities="com.facebook.app.FacebookContentProvider873131172823528"
                   android:name="com.facebook.FacebookContentProvider"
                   android:exported="true" />
     </application>
