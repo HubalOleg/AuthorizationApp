@@ -9,7 +9,9 @@ import com.oleg.hubal.authorizationapp.Utils;
 import com.oleg.hubal.authorizationapp.view.login.LoginFragment;
 import com.oleg.hubal.authorizationapp.view.profile.ProfileFragment;
 
-public class MainActivity extends AppCompatActivity implements LoginFragment.UserLoginListener  {
+public class MainActivity extends AppCompatActivity implements
+        LoginFragment.UserLoginListener,
+        ProfileFragment.UserLogoutListener {
 
     private static final String TAG = "MainActivity";
 
@@ -21,11 +23,12 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Use
         if (Utils.isLoggedIn(AccessToken.getCurrentAccessToken())) {
             showProfileFragment();
         } else {
-            openLoginFragment();
+            showLoginFragment();
         }
     }
 
-    private void openLoginFragment() {
+    @Override
+    public void showLoginFragment() {
         getSupportFragmentManager()
                 .beginTransaction()
                 .disallowAddToBackStack()
@@ -33,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Use
                 .commit();
     }
 
+    @Override
     public void showProfileFragment() {
         getSupportFragmentManager()
                 .beginTransaction()
@@ -40,4 +44,5 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.Use
                 .replace(R.id.fl_fragment_container, ProfileFragment.newInstance())
                 .commit();
     }
+
 }

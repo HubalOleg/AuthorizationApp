@@ -23,10 +23,12 @@ import com.oleg.hubal.authorizationapp.view.MainActivity;
 
 public class LoginFragment extends Fragment implements LoginViewContract {
 
+    private static final String mPermissions = "email";
+
     private LoginPresenterContract mPresenter;
     private CallbackManager mCallbackManager;
     private LoginButton mLoginButton;
-    private UserLoginListener mAuthorizationListener;
+    private UserLoginListener mLoginListener;
 
     public static LoginFragment newInstance() {
         LoginFragment loginFragment = new LoginFragment();
@@ -37,7 +39,7 @@ public class LoginFragment extends Fragment implements LoginViewContract {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mAuthorizationListener = (MainActivity) context;
+        mLoginListener = (MainActivity) context;
     }
 
     @Override
@@ -56,7 +58,7 @@ public class LoginFragment extends Fragment implements LoginViewContract {
         View view = inflater.inflate(R.layout.fragment_login, container, false);
         mCallbackManager = CallbackManager.Factory.create();
         mLoginButton = (LoginButton) view.findViewById(R.id.login_button);
-        mLoginButton.setReadPermissions("email");
+        mLoginButton.setReadPermissions(mPermissions);
         mLoginButton.setFragment(LoginFragment.this);
 
         mLoginButton.registerCallback(mCallbackManager, mPresenter.getFacebookLoginCallback());
@@ -76,8 +78,8 @@ public class LoginFragment extends Fragment implements LoginViewContract {
     }
 
     @Override
-    public void showProfileFragment() {
-        mAuthorizationListener.showProfileFragment();
+    public void userLogin() {
+        mLoginListener.showProfileFragment();
     }
 
     public interface UserLoginListener {

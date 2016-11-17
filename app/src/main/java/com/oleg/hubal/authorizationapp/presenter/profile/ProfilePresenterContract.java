@@ -8,6 +8,5 @@ import com.oleg.hubal.authorizationapp.presenter.BasePresenter;
 
 public interface ProfilePresenterContract extends BasePresenter {
 
-    void fillEmailTextView();
 
 }

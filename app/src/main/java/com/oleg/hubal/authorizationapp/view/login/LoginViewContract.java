@@ -7,6 +7,6 @@ package com.oleg.hubal.authorizationapp.view.login;
 public interface LoginViewContract {
 
     void showError();
-    void showProfileFragment();
+    void userLogin();
 
 }

@@ -6,6 +6,6 @@ package com.oleg.hubal.authorizationapp.view.profile;
 
 public interface ProfileViewContract {
 
-    public void showEmail(String email);
+    void userLogout();
 
 }
