@@ -18,8 +18,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.CallbackManager;
-import com.facebook.share.model.ShareContent;
-import com.facebook.share.widget.ShareDialog;
 import com.oleg.hubal.authorizationapp.R;
 import com.oleg.hubal.authorizationapp.model.User;
 import com.oleg.hubal.authorizationapp.presenter.profile.ProfilePresenter;
@@ -109,26 +107,31 @@ public class ProfileFragment extends Fragment implements ProfileViewContract {
             }
         });
 
+        initShare(view);
+
+        mPresenter.fillUserProfile();
+
+        return view;
+    }
+
+    private void initShare(View view) {
         Button btnShare = (Button) view.findViewById(R.id.btn_share);
         btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), mImageUri);
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    final byte[] data = stream.toByteArray();
-                    mPresenter.shareData(etShareMessage.getText().toString(), data);
+                    if (mImageUri != null) {
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), mImageUri);
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                        final byte[] data = stream.toByteArray();
+                        mPresenter.shareData(etShareMessage.getText().toString(), data);
+                    }
                 } catch(IOException e) {
-
+                    e.printStackTrace();
                 }
-
             }
         });
-
-        mPresenter.fillUserProfile();
-
-        return view;
     }
 
     @Override
@@ -145,10 +148,8 @@ public class ProfileFragment extends Fragment implements ProfileViewContract {
     }
 
     @Override
-    public void showShareDialog(ShareContent content) {
-        ShareDialog share = new ShareDialog(ProfileFragment.this);
-        share.registerCallback(mCallbackManager ,mPresenter.getFacebookShareCallback());
-        share.show(content);
+    public void showSuccessShare(String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
