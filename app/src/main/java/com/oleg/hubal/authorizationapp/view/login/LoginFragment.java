@@ -1,32 +1,32 @@
 package com.oleg.hubal.authorizationapp.view.login;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.oleg.hubal.authorizationapp.R;
-
-import static android.content.ContentValues.TAG;
+import com.oleg.hubal.authorizationapp.presenter.login.LoginPresenter;
+import com.oleg.hubal.authorizationapp.presenter.login.LoginPresenterContract;
+import com.oleg.hubal.authorizationapp.view.MainActivity;
 
 /**
  * Created by User on 16.11.2016.
  */
 
-public class LoginFragment extends Fragment implements LoginView {
+public class LoginFragment extends Fragment implements LoginViewContract {
 
+    private LoginPresenterContract mPresenter;
     private CallbackManager mCallbackManager;
     private LoginButton mLoginButton;
+    private UserLoginListener mAuthorizationListener;
 
     public static LoginFragment newInstance() {
         LoginFragment loginFragment = new LoginFragment();
@@ -34,38 +34,55 @@ public class LoginFragment extends Fragment implements LoginView {
         return loginFragment;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mAuthorizationListener = (MainActivity) context;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        init();
+    }
+
+    private void init() {
+        mPresenter = new LoginPresenter(LoginFragment.this);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_login, container, false);
-        final TextView tv = (TextView) view.findViewById(R.id.facebook_text);
         mCallbackManager = CallbackManager.Factory.create();
-        mLoginButton = (LoginButton) view.findViewById(R.id.btn_facebook_login);
+        mLoginButton = (LoginButton) view.findViewById(R.id.login_button);
         mLoginButton.setReadPermissions("email");
-        mLoginButton.setFragment(this);
-        mLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                tv.setText(loginResult.getAccessToken().getUserId());
-                Log.d(TAG, "onSuccess: " + loginResult.getAccessToken().getUserId());
-            }
+        mLoginButton.setFragment(LoginFragment.this);
 
-            @Override
-            public void onCancel() {
-                Log.d(TAG, "onCancel: ");
-            }
+        mLoginButton.registerCallback(mCallbackManager, mPresenter.getFacebookLoginCallback());
 
-            @Override
-            public void onError(FacebookException error) {
-                Log.d(TAG, "onError: ");
-            }
-        });
         return view;
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "onActivityResult: " + requestCode + " " + resultCode + " ");
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
+
+    @Override
+    public void showError() {
+        Toast.makeText(getContext(), R.string.login_error, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showProfileFragment() {
+        mAuthorizationListener.showProfileFragment();
+    }
+
+    public interface UserLoginListener {
+        void showProfileFragment();
+    }
+
+
 }
