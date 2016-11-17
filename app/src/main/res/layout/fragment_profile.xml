@@ -3,6 +3,7 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -10,35 +11,30 @@
 
         <ImageView
             android:id="@+id/iv_user_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/com_facebook_profile_picture_blank_square"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"/>
 
         <TextView
+            android:id="@+id/tv_user_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:text="username"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/iv_user_image"
+            android:layout_toEndOf="@+id/iv_user_image"/>
+        
+        <TextView
             android:id="@+id/tv_user_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="User_Email"
-            android:textSize="16sp"
-            android:layout_above="@+id/tv_user_birthday"
-            android:layout_alignRight="@+id/tv_user_name"
-            android:layout_alignEnd="@+id/tv_user_name"
-            android:layout_toRightOf="@+id/iv_user_image"
-            android:layout_toEndOf="@+id/iv_user_image"/>
-
-        <TextView
-            android:id="@+id/tv_user_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="User_Name"
-            android:textSize="16sp"
-            android:layout_above="@+id/tv_user_email"
-            android:layout_toRightOf="@+id/iv_user_image"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"/>
+            android:layout_below="@id/tv_user_name"
+            android:layout_alignLeft="@id/tv_user_name"
+            android:textSize="16sp"/>
 
         <TextView
             android:id="@+id/tv_user_birthday"
@@ -46,11 +42,9 @@
             android:layout_height="wrap_content"
             android:text="User_Birthday"
             android:textSize="16sp"
-            android:layout_alignBottom="@+id/iv_user_image"
-            android:layout_alignLeft="@+id/tv_user_email"
-            android:layout_alignStart="@+id/tv_user_email"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"/>
+            android:layout_below="@+id/tv_user_email"
+            android:layout_alignLeft="@id/tv_user_email"/>
+
     </RelativeLayout>
 
     <RelativeLayout

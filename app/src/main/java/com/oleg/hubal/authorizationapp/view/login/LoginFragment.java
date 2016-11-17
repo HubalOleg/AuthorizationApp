@@ -17,13 +17,15 @@ import com.oleg.hubal.authorizationapp.presenter.login.LoginPresenter;
 import com.oleg.hubal.authorizationapp.presenter.login.LoginPresenterContract;
 import com.oleg.hubal.authorizationapp.view.MainActivity;
 
+import java.util.Arrays;
+
 /**
  * Created by User on 16.11.2016.
  */
 
 public class LoginFragment extends Fragment implements LoginViewContract {
 
-    private static final String mPermissions = "email";
+    private static final String PERMISSIONS = "public_profile, email, user_birthday";
 
     private LoginPresenterContract mPresenter;
     private CallbackManager mCallbackManager;
@@ -58,7 +60,7 @@ public class LoginFragment extends Fragment implements LoginViewContract {
         View view = inflater.inflate(R.layout.fragment_login, container, false);
         mCallbackManager = CallbackManager.Factory.create();
         mLoginButton = (LoginButton) view.findViewById(R.id.login_button);
-        mLoginButton.setReadPermissions(mPermissions);
+        mLoginButton.setReadPermissions(Arrays.asList(PERMISSIONS));
         mLoginButton.setFragment(LoginFragment.this);
 
         mLoginButton.registerCallback(mCallbackManager, mPresenter.getFacebookLoginCallback());

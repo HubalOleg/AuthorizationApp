@@ -8,5 +8,8 @@ import com.oleg.hubal.authorizationapp.presenter.BasePresenter;
 
 public interface ProfilePresenterContract extends BasePresenter {
 
+    void userLogout();
+    void shareData();
+    void fillUserProfile();
 
 }
