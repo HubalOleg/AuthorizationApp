@@ -2,10 +2,9 @@ package com.oleg.hubal.authorizationapp.view.profile;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -18,17 +17,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.CallbackManager;
+import com.oleg.hubal.authorizationapp.Constants;
+import com.oleg.hubal.authorizationapp.MainActivity;
 import com.oleg.hubal.authorizationapp.R;
 import com.oleg.hubal.authorizationapp.model.User;
-import com.oleg.hubal.authorizationapp.presenter.profile.ProfilePresenter;
+import com.oleg.hubal.authorizationapp.presenter.profile.FacebookProfilePresenter;
 import com.oleg.hubal.authorizationapp.presenter.profile.ProfilePresenterContract;
-import com.oleg.hubal.authorizationapp.view.MainActivity;
 import com.squareup.picasso.Picasso;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
-import static android.app.Activity.RESULT_OK;
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by User on 17.11.2016.
@@ -64,6 +61,7 @@ public class ProfileFragment extends Fragment implements ProfileViewContract {
 
     public static ProfileFragment newInstance() {
         ProfileFragment profileFragment = new ProfileFragment();
+
         return profileFragment;
     }
 
@@ -80,15 +78,21 @@ public class ProfileFragment extends Fragment implements ProfileViewContract {
     }
 
     private void init() {
-        mPresenter = new ProfilePresenter(ProfileFragment.this);
+        switch (getLoginStatus()) {
+            case Constants.LOGIN_STATUS_FACEBOOK:
+                mPresenter = new FacebookProfilePresenter(ProfileFragment.this);
+                mCallbackManager = CallbackManager.Factory.create();
+                break;
+            default:
+                userLogout();
+                break;
+        }
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-
-        mCallbackManager = CallbackManager.Factory.create();
 
         tvUserName = (TextView) view.findViewById(R.id.tv_user_name);
         tvUserEmail = (TextView) view.findViewById(R.id.tv_user_email);
@@ -103,33 +107,25 @@ public class ProfileFragment extends Fragment implements ProfileViewContract {
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mPresenter.userLogout();
+                mPresenter.onUserLogout();
             }
         });
 
         initShare(view);
 
-        mPresenter.fillUserProfile();
+        mPresenter.onFillUserProfile();
 
         return view;
     }
 
     private void initShare(View view) {
+        String caption = etShareMessage.getText().toString();
         Button btnShare = (Button) view.findViewById(R.id.btn_share);
         btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try {
-                    if (mImageUri != null) {
-                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), mImageUri);
-                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                        final byte[] data = stream.toByteArray();
-                        mPresenter.shareData(etShareMessage.getText().toString(), data);
-                    }
-                } catch(IOException e) {
-                    e.printStackTrace();
-                }
+                String caption = etShareMessage.getText().toString();
+                mPresenter.onShareData(caption, mImageUri);
             }
         });
     }
@@ -144,7 +140,15 @@ public class ProfileFragment extends Fragment implements ProfileViewContract {
 
     @Override
     public void userLogout() {
+        changeLoginStatus();
         mLogoutListener.showLoginFragment();
+    }
+
+    private void changeLoginStatus() {
+        SharedPreferences sPref = getActivity().getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor editor = sPref.edit();
+        editor.putInt(Constants.PREF_LOGIN_STATUS, Constants.LOGIN_STATUS_NONE);
+        editor.apply();
     }
 
     @Override
@@ -161,19 +165,18 @@ public class ProfileFragment extends Fragment implements ProfileViewContract {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
-                && data != null && data.getData() != null) {
-            setImageFromGallery(data.getData());
+        if (requestCode == PICK_IMAGE_REQUEST) {
+            showSharePhoto(data);
         }
     }
 
-    private void setImageFromGallery(Uri uri) {
-        mImageUri = uri;
-        Picasso.with(getContext()).load(uri).into(ivShareImage);
+    private void showSharePhoto(Intent data) {
+        mImageUri = data.getData();
+        Picasso.with(getContext()).load(mImageUri).into(ivShareImage);
     }
 
-    public interface UserLogoutListener {
-        void showLoginFragment();
+    public int getLoginStatus() {
+        SharedPreferences sPref = getActivity().getPreferences(MODE_PRIVATE);
+        return sPref.getInt(Constants.PREF_LOGIN_STATUS, Constants.LOGIN_STATUS_NONE);
     }
 }

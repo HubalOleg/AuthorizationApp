@@ -1,13 +1,17 @@
 package com.oleg.hubal.authorizationapp.presenter.profile;
 
+import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.facebook.AccessToken;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
-import com.facebook.HttpMethod;
 import com.facebook.login.LoginManager;
+import com.facebook.share.ShareApi;
+import com.facebook.share.model.SharePhoto;
+import com.facebook.share.model.SharePhotoContent;
 import com.oleg.hubal.authorizationapp.Utils;
 import com.oleg.hubal.authorizationapp.model.User;
 import com.oleg.hubal.authorizationapp.view.profile.ProfileViewContract;
@@ -19,9 +23,7 @@ import org.json.JSONObject;
  * Created by User on 17.11.2016.
  */
 
-public class ProfilePresenter implements ProfilePresenterContract {
-
-    private static final String TAG = "ProfilePresenter";
+public class FacebookProfilePresenter implements ProfilePresenterContract {
 
     private static final String BUNDLE_KEY = "fields";
     private static final String PARAMETERS = "id,name,email,birthday";
@@ -35,7 +37,24 @@ public class ProfilePresenter implements ProfilePresenterContract {
         }
     };
 
-    public ProfilePresenter(ProfileViewContract view) {
+    private FacebookCallback mShareCallback = new FacebookCallback() {
+        @Override
+        public void onSuccess(Object o) {
+            mView.showSuccessShare("Success Share");
+        }
+
+        @Override
+        public void onCancel() {
+
+        }
+
+        @Override
+        public void onError(FacebookException error) {
+            mView.showError("Share Error");
+        }
+    };
+
+    public FacebookProfilePresenter(ProfileViewContract view) {
         mView = view;
     }
 
@@ -63,7 +82,7 @@ public class ProfilePresenter implements ProfilePresenterContract {
     }
 
     @Override
-    public void userLogout() {
+    public void onUserLogout() {
         if (Utils.isLoggedIn(AccessToken.getCurrentAccessToken())) {
             LoginManager.getInstance().logOut();
             mView.userLogout();
@@ -71,28 +90,23 @@ public class ProfilePresenter implements ProfilePresenterContract {
     }
 
     @Override
-    public void shareData(String message, byte[] data) {
-        Bundle params = new Bundle();
-        params.putString("caption", message);
+    public void onShareData(String caption, Uri photoUri) {
+        SharePhoto photo = new SharePhoto
+                .Builder()
+                .setImageUrl(photoUri)
+                .setCaption(caption)
+                .build();
 
-        params.putByteArray("picture", data);
+        SharePhotoContent content = new SharePhotoContent
+                .Builder()
+                .addPhoto(photo)
+                .build();
 
-        new GraphRequest(
-                AccessToken.getCurrentAccessToken(),
-                "/me/photos",
-                params,
-                HttpMethod.POST,
-                new GraphRequest.Callback() {
-                    @Override
-                    public void onCompleted(GraphResponse response) {
-                        Log.d(TAG, "onCompleted: " + response.getRawResponse());
-                    }
-                }
-        ).executeAsync();
+        ShareApi.share(content, mShareCallback);
     }
 
     @Override
-    public void fillUserProfile() {
+    public void onFillUserProfile() {
         GraphRequest request = GraphRequest.newMeRequest(
                 AccessToken.getCurrentAccessToken(), mJSONObjectCallback
         );

@@ -2,20 +2,22 @@ package com.oleg.hubal.authorizationapp.view.login;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
-import com.facebook.CallbackManager;
-import com.facebook.login.widget.LoginButton;
+import com.facebook.login.LoginManager;
+import com.oleg.hubal.authorizationapp.Constants;
+import com.oleg.hubal.authorizationapp.MainActivity;
 import com.oleg.hubal.authorizationapp.R;
 import com.oleg.hubal.authorizationapp.presenter.login.LoginPresenter;
 import com.oleg.hubal.authorizationapp.presenter.login.LoginPresenterContract;
-import com.oleg.hubal.authorizationapp.view.MainActivity;
 
 import java.util.Arrays;
 
@@ -28,8 +30,6 @@ public class LoginFragment extends Fragment implements LoginViewContract {
     private static final String PERMISSIONS = "public_profile, email, user_birthday";
 
     private LoginPresenterContract mPresenter;
-    private CallbackManager mCallbackManager;
-    private LoginButton mLoginButton;
     private UserLoginListener mLoginListener;
 
     public static LoginFragment newInstance() {
@@ -58,12 +58,15 @@ public class LoginFragment extends Fragment implements LoginViewContract {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_login, container, false);
-        mCallbackManager = CallbackManager.Factory.create();
-        mLoginButton = (LoginButton) view.findViewById(R.id.login_button);
-        mLoginButton.setReadPermissions(Arrays.asList(PERMISSIONS));
-        mLoginButton.setFragment(LoginFragment.this);
 
-        mLoginButton.registerCallback(mCallbackManager, mPresenter.getFacebookLoginCallback());
+        Button btnFacebookLogin = (Button) view.findViewById(R.id.btn_facebook_login);
+        btnFacebookLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LoginManager.getInstance().logInWithReadPermissions(LoginFragment.this, Arrays.asList(PERMISSIONS));
+                mPresenter.onFacebookLogin();
+            }
+        });
 
         return view;
     }
@@ -71,7 +74,7 @@ public class LoginFragment extends Fragment implements LoginViewContract {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+        mPresenter.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -80,13 +83,15 @@ public class LoginFragment extends Fragment implements LoginViewContract {
     }
 
     @Override
-    public void userLogin() {
+    public void userLogin(int loginStatus) {
+        changeLoginStatus(loginStatus);
         mLoginListener.showProfileFragment();
     }
 
-    public interface UserLoginListener {
-        void showProfileFragment();
+    private void changeLoginStatus(int loginStatus) {
+        SharedPreferences sPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sPref.edit();
+        editor.putInt(Constants.PREF_LOGIN_STATUS, loginStatus);
+        editor.apply();
     }
-
-
 }

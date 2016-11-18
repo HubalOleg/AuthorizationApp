@@ -4,13 +4,19 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/login_button"
+    <Button
+        android:id="@+id/btn_facebook_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="30dp" />
+        android:text="Login with FACEBOOK"
+        android:background="@drawable/com_facebook_button_login_silver_background"/>
+
+    <!--<com.facebook.login.widget.LoginButton-->
+        <!--android:id="@+id/login_button"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="center_horizontal"-->
+        <!--android:layout_marginTop="30dp"-->
+        <!--android:layout_marginBottom="30dp" />-->
 
 </LinearLayout>

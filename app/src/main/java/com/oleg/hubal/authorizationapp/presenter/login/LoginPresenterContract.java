@@ -1,7 +1,7 @@
 package com.oleg.hubal.authorizationapp.presenter.login;
 
-import com.facebook.FacebookCallback;
-import com.facebook.login.LoginResult;
+import android.content.Intent;
+
 import com.oleg.hubal.authorizationapp.presenter.BasePresenter;
 
 /**
@@ -10,6 +10,7 @@ import com.oleg.hubal.authorizationapp.presenter.BasePresenter;
 
 public interface LoginPresenterContract extends BasePresenter {
 
-    FacebookCallback<LoginResult> getFacebookLoginCallback();
+    void onFacebookLogin();
+    void onActivityResult(int requestCode, int resultCode, Intent data);
 
 }

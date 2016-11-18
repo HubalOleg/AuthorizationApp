@@ -1,5 +1,7 @@
 package com.oleg.hubal.authorizationapp.presenter.profile;
 
+import android.net.Uri;
+
 import com.oleg.hubal.authorizationapp.presenter.BasePresenter;
 
 /**
@@ -8,8 +10,8 @@ import com.oleg.hubal.authorizationapp.presenter.BasePresenter;
 
 public interface ProfilePresenterContract extends BasePresenter {
 
-    void userLogout();
-    void shareData(String message, byte[] data);
-    void fillUserProfile();
+    void onUserLogout();
+    void onShareData(String caption, Uri photoUri);
+    void onFillUserProfile();
 
 }

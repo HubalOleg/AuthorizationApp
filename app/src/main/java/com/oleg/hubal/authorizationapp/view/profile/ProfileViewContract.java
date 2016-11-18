@@ -13,4 +13,8 @@ public interface ProfileViewContract {
     void showSuccessShare(String message);
     void showError(String error);
 
+    interface UserLogoutListener {
+        void showLoginFragment();
+    }
+
 }
