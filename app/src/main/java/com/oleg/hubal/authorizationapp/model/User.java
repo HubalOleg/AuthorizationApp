@@ -10,6 +10,9 @@ public class User {
     private String birthday;
     private String imageURL;
 
+    public User() {
+
+    }
 
     public User(String name, String email, String birthday, String imageURL) {
         this.name = name;

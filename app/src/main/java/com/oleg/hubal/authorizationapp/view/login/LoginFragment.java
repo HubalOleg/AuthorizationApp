@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
+import com.google.android.gms.common.SignInButton;
 import com.oleg.hubal.authorizationapp.Constants;
 import com.oleg.hubal.authorizationapp.MainActivity;
 import com.oleg.hubal.authorizationapp.R;
@@ -59,6 +60,13 @@ public class LoginFragment extends Fragment implements LoginViewContract {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_login, container, false);
 
+        initFacebookLoginButton(view);
+        initGooglePlusLoginButton(view);
+
+        return view;
+    }
+
+    private void initFacebookLoginButton(View view) {
         Button btnFacebookLogin = (Button) view.findViewById(R.id.btn_facebook_login);
         btnFacebookLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,8 +75,16 @@ public class LoginFragment extends Fragment implements LoginViewContract {
                 mPresenter.onFacebookLogin();
             }
         });
+    }
 
-        return view;
+    private void initGooglePlusLoginButton(View view) {
+        SignInButton signInButton = (SignInButton) view.findViewById(R.id.btn_googleplus_login);
+        signInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mPresenter.onGooglePlusLogin(getContext());
+            }
+        });
     }
 
     @Override
@@ -88,10 +104,26 @@ public class LoginFragment extends Fragment implements LoginViewContract {
         mLoginListener.showProfileFragment();
     }
 
+    @Override
+    public void startRequest(Intent intent) {
+        startActivityForResult(intent, Constants.REQUEST_GOOGLE_SIGN_IN);
+    }
+
     private void changeLoginStatus(int loginStatus) {
         SharedPreferences sPref = getActivity().getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sPref.edit();
         editor.putInt(Constants.PREF_LOGIN_STATUS, loginStatus);
         editor.apply();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mPresenter.onStop();
     }
 }

@@ -1,5 +1,7 @@
 package com.oleg.hubal.authorizationapp.view.profile;
 
+import android.content.Intent;
+
 import com.oleg.hubal.authorizationapp.model.User;
 
 /**
@@ -12,6 +14,7 @@ public interface ProfileViewContract {
     void userLogout();
     void showSuccessShare(String message);
     void showError(String error);
+    void startRequest(Intent intent, int requestCode);
 
     interface UserLogoutListener {
         void showLoginFragment();

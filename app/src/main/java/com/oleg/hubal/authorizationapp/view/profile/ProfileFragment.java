@@ -22,6 +22,7 @@ import com.oleg.hubal.authorizationapp.MainActivity;
 import com.oleg.hubal.authorizationapp.R;
 import com.oleg.hubal.authorizationapp.model.User;
 import com.oleg.hubal.authorizationapp.presenter.profile.FacebookProfilePresenter;
+import com.oleg.hubal.authorizationapp.presenter.profile.GooglePlusProfilePresenter;
 import com.oleg.hubal.authorizationapp.presenter.profile.ProfilePresenterContract;
 import com.squareup.picasso.Picasso;
 
@@ -61,7 +62,6 @@ public class ProfileFragment extends Fragment implements ProfileViewContract {
 
     public static ProfileFragment newInstance() {
         ProfileFragment profileFragment = new ProfileFragment();
-
         return profileFragment;
     }
 
@@ -81,6 +81,9 @@ public class ProfileFragment extends Fragment implements ProfileViewContract {
         switch (getLoginStatus()) {
             case Constants.LOGIN_STATUS_FACEBOOK:
                 mPresenter = new FacebookProfilePresenter(ProfileFragment.this);
+                break;
+            case Constants.LOGIN_STATUS_GOOGLE_PLUS:
+                mPresenter = new GooglePlusProfilePresenter(getContext() ,ProfileFragment.this);
                 break;
             default:
                 userLogout();
@@ -162,17 +165,27 @@ public class ProfileFragment extends Fragment implements ProfileViewContract {
     }
 
     @Override
+    public void startRequest(Intent intent, int requestCode) {
+        startActivityForResult(intent, requestCode);
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE_REQUEST) {
             showSharePhoto(data);
         }
+        if (requestCode == Constants.REQUEST_GOOGLE_SIGN_IN) {
+            mPresenter.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     private void showSharePhoto(Intent data) {
-        mImageUri = data.getData();
-        Picasso.with(getContext()).load(mImageUri).into(ivShareImage);
+        if (data != null) {
+            mImageUri = data.getData();
+            Picasso.with(getContext()).load(mImageUri).into(ivShareImage);
+        }
     }
 
     public int getLoginStatus() {

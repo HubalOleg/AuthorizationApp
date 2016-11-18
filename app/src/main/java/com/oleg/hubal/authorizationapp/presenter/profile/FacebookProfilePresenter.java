@@ -1,5 +1,6 @@
 package com.oleg.hubal.authorizationapp.presenter.profile;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -44,9 +45,7 @@ public class FacebookProfilePresenter implements ProfilePresenterContract {
         }
 
         @Override
-        public void onCancel() {
-
-        }
+        public void onCancel() {}
 
         @Override
         public void onError(FacebookException error) {
@@ -114,5 +113,10 @@ public class FacebookProfilePresenter implements ProfilePresenterContract {
         parameters.putString(BUNDLE_KEY, PARAMETERS);
         request.setParameters(parameters);
         request.executeAsync();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
     }
 }

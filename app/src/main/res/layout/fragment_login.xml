@@ -11,6 +11,11 @@
         android:text="Login with FACEBOOK"
         android:background="@drawable/com_facebook_button_login_silver_background"/>
 
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/btn_googleplus_login"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content" />
+
     <!--<com.facebook.login.widget.LoginButton-->
         <!--android:id="@+id/login_button"-->
         <!--android:layout_width="wrap_content"-->
