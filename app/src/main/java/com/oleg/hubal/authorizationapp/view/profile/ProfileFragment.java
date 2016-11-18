@@ -81,7 +81,6 @@ public class ProfileFragment extends Fragment implements ProfileViewContract {
         switch (getLoginStatus()) {
             case Constants.LOGIN_STATUS_FACEBOOK:
                 mPresenter = new FacebookProfilePresenter(ProfileFragment.this);
-                mCallbackManager = CallbackManager.Factory.create();
                 break;
             default:
                 userLogout();
@@ -103,6 +102,8 @@ public class ProfileFragment extends Fragment implements ProfileViewContract {
 
         ivShareImage.setOnClickListener(mOpenGalleryClickListener);
 
+        mCallbackManager = CallbackManager.Factory.create();
+
         Button btnLogout = (Button) view.findViewById(R.id.btn_logout);
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,7 +120,6 @@ public class ProfileFragment extends Fragment implements ProfileViewContract {
     }
 
     private void initShare(View view) {
-        String caption = etShareMessage.getText().toString();
         Button btnShare = (Button) view.findViewById(R.id.btn_share);
         btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
